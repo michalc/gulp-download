@@ -1,62 +1,60 @@
-var through = require("through"),
-  gutil = require("gulp-util"),
-  request = require("request"),
-  progress = require("request-progress"),
-  col = gutil.colors;
+var through = require("through2");
+var from = require("from2");
+var gutil = require("gulp-util");
+var request = require("request");
+var progress = require("request-progress");
+var pretty = require("pretty-hrtime");
+var col = gutil.colors;
+var log = gutil.log;
 
-module.exports = function(urls){
-  var stream = through(function(file,enc,cb){
-    this.push(file);
-    cb();
-  });
+module.exports = function(urls) {
+  urls = typeof urls === 'string' ? [urls] : urls;
+  urlIndex = 0;
 
-  function log(text) {
-    process.stdout.write(text);
-  }
-
-  var files = typeof urls === 'string' ? [urls] : urls;
-  var downloadCount = 0;
-
-
-  function download(url){
-    var fileName,
-      firstLog = true;
-    
+  function getFile(url) {
     if (typeof url === "object") {
       fileName = url.file;
       url = url.url;
     } else {
       fileName = url.split('/').pop();
     }
-    progress(
-      request({url:url,encoding:null},downloadHandler),
-      {throttle:1000,delay:1000}
-    )
-    .on('progress',function(state){
-      log(' '+state.percent+'%');
+
+    var contents = through();
+
+    var start = process.hrtime();
+    log('Downloading', col.magenta(url) + '...');
+
+    var r = request({
+      url: url,
+      encoding: null
     })
-    .on('data',function(){
-      if(firstLog){
-        log('['+col.green('gulp')+']'+' Downloading '+col.cyan(url)+'...');
-        firstLog = false;
-      }
+    .on('end', function() {
+      var end = process.hrtime(start);
+      log('Downloaded', col.magenta(url), 'after', col.magenta(pretty(end)));
+    }).pipe(contents);
+
+    return new gutil.File({
+      path: fileName,
+      contents: contents
     });
-
-    function downloadHandler(err, res, body){
-      var file = new gutil.File( {path:fileName, contents: new Buffer(body)} );
-      stream.queue(file);
-
-      log(' '+col.green('Done\n'));
-      downloadCount++;
-      if(downloadCount != files.length){
-        download(files[downloadCount]);
-      }else{
-        stream.emit('end');
-      }
-    }
   }
-  download(files[0]);
 
-  return stream;
+  return from({
+    objectMode: true
+  }, function(size, next) {
+    var i = 0;
+
+    while (urlIndex < urls.length && i < size) {
+      url = urls[urlIndex];
+      next(null, getFile(url));
+
+      ++i;
+      ++urlIndex;
+    }
+
+    if (urlIndex == urls.length) {
+      next(null, null);
+    }
+  });
 };
 
