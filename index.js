@@ -10,6 +10,9 @@ module.exports = function(urls){
     cb();
   });
 
+  function log(text) {
+    process.stdout.write(text);
+  }
 
   var files = typeof urls === 'string' ? [urls] : urls;
   var downloadCount = 0;
@@ -30,11 +33,11 @@ module.exports = function(urls){
       {throttle:1000,delay:1000}
     )
     .on('progress',function(state){
-      process.stdout.write(' '+state.percent+'%');
+      log(' '+state.percent+'%');
     })
     .on('data',function(){
       if(firstLog){
-        process.stdout.write('['+col.green('gulp')+']'+' Downloading '+col.cyan(url)+'...');
+        log('['+col.green('gulp')+']'+' Downloading '+col.cyan(url)+'...');
         firstLog = false;
       }
     });
@@ -43,7 +46,7 @@ module.exports = function(urls){
       var file = new gutil.File( {path:fileName, contents: new Buffer(body)} );
       stream.queue(file);
 
-      process.stdout.write(' '+col.green('Done\n'));
+      log(' '+col.green('Done\n'));
       downloadCount++;
       if(downloadCount != files.length){
         download(files[downloadCount]);
