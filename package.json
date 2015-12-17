@@ -1,7 +1,7 @@
 {
   "name": "gulp-download-stream",
-  "version": "0.0.5",
-  "description": "Gulp plugin for downloading files via http/https.",
+  "version": "0.0.6",
+  "description": "Gulp plugin for downloading files in parallel into Vinyl streams",
   "license": "MIT",
   "author": "Michael Ostermann <metrime@icloud.com>",
   "contributors": [
