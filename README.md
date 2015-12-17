@@ -1,14 +1,14 @@
-#gulp-download
+#gulp-download-stream
 
-[Request](https://github.com/mikeal/request) wrapper for gulp, allowing you to download files via http/https.
+[Request](https://github.com/mikeal/request) wrapper for gulp, allowing you to download files via http/https. The downloads are [streamed](streamed) and run concurrently.
 
-##Installation
+#Installation
 
-	npm install gulp-download
+	npm install gulp-download-stream
 	
-##Usage
+#Usage
 
-	var download = require("gulp-download");
+	var download = require("gulp-download-stream");
 	
 	download(url)
 		.pipe(gulp.dest("downloads/"));
