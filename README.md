@@ -58,11 +58,11 @@ or for multiple files.
 
 ```javascript
 download([{
-  file: "newFileName.ext",
-  url: "http://domain.com/path/to/file.ext"
+  file: "newFileName1.ext",
+  url: "http://domain.com/path/to/file1.ext"
 }, {
-  file: "newFileName.ext",
-  url: "http://domain.com/path/to/file.ext"
+  file: "newFileName2.ext",
+  url: "http://domain.com/path/to/file2.ext"
 }])
   .pipe(gulp.dest("downloads/"));
 ```
