@@ -1,6 +1,6 @@
 {
   "name": "gulp-download-stream",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Gulp plugin for downloading files via http/https.",
   "license": "MIT",
   "author": "Michael Ostermann <metrime@icloud.com>",
