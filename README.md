@@ -22,11 +22,9 @@ var download = require("gulp-download-stream");
 To download a single file, pass a string as the first argument to `download`.
 	
 ```javascript
-	download("http://domain.com/path/to/file.ext")
-		.pipe(gulp.dest("downloads/"));
+download("http://domain.com/path/to/file.ext")
+  .pipe(gulp.dest("downloads/"));
 ```
-
-Note that the request is streamed, so the gulp task doesn't wait for the entire download to be completed.
 
 
 ## Download multiple files
@@ -41,7 +39,7 @@ download([
   .pipe(gulp.dest("downloads/"));
 ```
 
-The files are downloaded concurrently, using the usual stream of Vinyl files that gulp uses. Each Vinyl file is also itself a stream, and so any other plugins the files are piped to must also support stream-based Vinyl files.
+The files are downloaded concurrently into stream of Vinyl files, and so are suitable to be piped into other gulp plugins. Each Vinyl file is also itself a stream, and so any downstream plugins must also support stream-based Vinyl files.
 
 
 ## Specify local file name
@@ -68,4 +66,4 @@ download([{
 }])
   .pipe(gulp.dest("downloads/"));
 ```
-
+://github.com/gulpjs/vinyl
