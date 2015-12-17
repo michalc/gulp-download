@@ -4,7 +4,7 @@
 
 ## Installation
 
-	npm install gulp-download-stream
+	npm install gulp-download-stream --save
 	
 ## Usage
 
