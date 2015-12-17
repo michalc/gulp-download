@@ -3,12 +3,15 @@ var from = require("from2");
 var gutil = require("gulp-util");
 var request = require("request");
 var pretty = require("pretty-hrtime");
+var merge = require("merge");
 var col = gutil.colors;
 var log = gutil.log;
 
-module.exports = function(urls) {
+module.exports = function(urls, options) {
   urls = typeof urls === 'string' ? [urls] : urls;
   urlIndex = 0;
+
+  options = options || {};
 
   function getFile(url) {
     if (typeof url === "object") {
@@ -23,10 +26,10 @@ module.exports = function(urls) {
     var start = process.hrtime();
     log('Downloading', col.magenta(url) + '...');
 
-    var r = request({
+    var r = request(merge({
       url: url,
       encoding: null
-    })
+    }, options))
     .on('end', function() {
       var end = process.hrtime(start);
       log('Downloaded', col.magenta(url), 'after', col.magenta(pretty(end)));

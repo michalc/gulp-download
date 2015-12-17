@@ -15,7 +15,6 @@ npm install gulp-download-stream --save
 ```javascript
 var download = require("gulp-download-stream");
 ```
-
 	
 ### Download single file
 
@@ -65,5 +64,22 @@ download([{
   url: "http://domain.com/path/to/file2.ext"
 }])
   .pipe(gulp.dest("downloads/"));
+```
+
+
+### Pass options to request
+
+You can pass options to request as the second argument. For example, you can request using HTTP authentication.
+
+```javascript
+download("http://domain.com/path/to/file.ext", {
+  "auth": {
+    "user": "username",
+    "pass": "password",
+    "sendImmediately': false
+  }
+})
+  .pipe(gulp.dest("downloads/"));
+
 ```
 
