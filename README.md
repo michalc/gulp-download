@@ -76,7 +76,7 @@ download("http://domain.com/path/to/file.ext", {
   "auth": {
     "user": "username",
     "pass": "password",
-    "sendImmediately': false
+    "sendImmediately": false
   }
 })
   .pipe(gulp.dest("downloads/"));
