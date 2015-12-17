@@ -2,7 +2,6 @@ var through = require("through2");
 var from = require("from2");
 var gutil = require("gulp-util");
 var request = require("request");
-var progress = require("request-progress");
 var pretty = require("pretty-hrtime");
 var col = gutil.colors;
 var log = gutil.log;
