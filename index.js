@@ -1,3 +1,5 @@
+'use strict';
+
 var through = require("through2");
 var from = require("from2");
 var gutil = require("gulp-util");
@@ -9,31 +11,39 @@ var log = gutil.log;
 var Error = gutil.PluginError;
 
 module.exports = function(urls, options) {
-  urls = typeof urls === 'string' ? [urls] : urls;
-  urlIndex = 0;
 
   options = options || {};
-
-  function getFile(url) {
-    if (typeof url === "object") {
-      fileName = url.file;
-      url = url.url;
-    } else {
-      fileName = url.split('/').pop();
+  
+  // Canonicalise urls to array of objects
+  urls = typeof urls === 'string' ? [urls] : urls;
+  urls.forEach(function(url, i) {
+    if (typeof url === 'string') {
+      urls[i] = {
+        url: url,
+        file: url.split('/').pop(),
+      };
     }
+  });
 
+  function getFile(obj) {
     var contents = through();
+    var file = new gutil.File({
+      path: obj.file,
+      contents: contents
+    });
 
+    // Request errors passed to file contents
     function emitError(e) {
       errored = true;
       contents.emit('error', new Error('gulp-download-stream', e));
     }
 
+    // Request pipes to file contents
     var start = process.hrtime();
     var errored = false;
-    log('Downloading', col.magenta(url) + '...');
+    log('Downloading', col.magenta(obj.url) + '...');
     var r = request(merge({
-      url: url,
+      url: obj.url,
       encoding: null
     }, options))
       .on('error', function(e) {
@@ -41,13 +51,13 @@ module.exports = function(urls, options) {
       })
       .on('response', function(response) {
         if (response.statusCode >= 400) {
-          emitError(col.magenta(response.statusCode) + ' returned from ' + col.magenta(url));
+          emitError(col.magenta(response.statusCode) + ' returned from ' + col.magenta(obj.url));
         }
       })
       .on('end', function(e) {
         if (!errored) {
           var end = process.hrtime(start);
-          log('Downloaded', col.magenta(url), 'after', col.magenta(pretty(end)));
+          log('Downloaded', col.magenta(obj.url), 'after', col.magenta(pretty(end)));
         }
       })
       .pipe(contents)
@@ -57,20 +67,18 @@ module.exports = function(urls, options) {
         // an error downloading
       });
 
-    return new gutil.File({
-      path: fileName,
-      contents: contents
-    });
+    return file;
   }
 
+
+  var urlIndex = 0;
   return from({
     objectMode: true
   }, function(size, next) {
     var i = 0;
 
     while (urlIndex < urls.length && i < size) {
-      url = urls[urlIndex];
-      next(null, getFile(url));
+      next(null, getFile(urls[urlIndex]));
 
       ++i;
       ++urlIndex;
