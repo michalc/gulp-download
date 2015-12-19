@@ -20,9 +20,9 @@ function canonicaliseUrls(urls) {
   });
 }
 
-function getFile(obj, options) {
+function getFile(urlObj, options) {
   var file = new gutil.File({
-    path: obj.file,
+    path: urlObj.file,
     contents: through()
   });
 
@@ -40,9 +40,9 @@ function getFile(obj, options) {
   // Request pipes to file contents
   var start = process.hrtime();
   var errored = false;
-  log('Downloading', col.magenta(obj.url) + '...');
+  log('Downloading', col.magenta(urlObj.url) + '...');
   request(merge({
-    url: obj.url,
+    url: urlObj.url,
     encoding: null
   }, options))
     .on('error', function(e) {
@@ -50,13 +50,13 @@ function getFile(obj, options) {
     })
     .on('response', function(response) {
       if (response.statusCode >= 400) {
-        emitError(col.magenta(response.statusCode) + ' returned from ' + col.magenta(obj.url));
+        emitError(col.magenta(response.statusCode) + ' returned from ' + col.magenta(urlObj.url));
       }
     })
     .on('end', function(e) {
       if (!errored) {
         var end = process.hrtime(start);
-        log('Downloaded', col.magenta(obj.url), 'after', col.magenta(pretty(end)));
+        log('Downloaded', col.magenta(urlObj.url), 'after', col.magenta(pretty(end)));
       }
     })
     .pipe(file.contents);
@@ -65,7 +65,7 @@ function getFile(obj, options) {
 }
 
 module.exports = function(urls, options) {
-  urls = canonicaliseUrls(urls);
+  var urlObjs = canonicaliseUrls(urls);
   options = options || {};
 
   var urlIndex = 0;
@@ -75,7 +75,7 @@ module.exports = function(urls, options) {
     var i = 0;
 
     while (urlIndex < urls.length && i < size) {
-      next(null, getFile(urls[urlIndex], options));
+      next(null, getFile(urlObjs[urlIndex], options));
 
       ++i;
       ++urlIndex;
