@@ -10,24 +10,38 @@ var col = gutil.colors;
 var log = gutil.log;
 var Error = gutil.PluginError;
 
+function canonicaliseUrls(urls) {
+  urls = typeof urls === 'string' ? [urls] : urls;
+  return urls.map(function(url, i) {
+    return typeof url === 'object' ? url : {
+      url: url,
+      file: url.split('/').pop(),
+    };
+  });
+}
+
 function getFile(obj, options) {
-  var contents = through();
   var file = new gutil.File({
     path: obj.file,
-    contents: contents
+    contents: through()
   });
+
+  // Avoids "Unhandled stream error in pipe" messages.
+  // gulp will still fail the containing task if there is
+  // an error downloading
+  file.contents.on('error', function() {});
 
   // Request errors passed to file contents
   function emitError(e) {
     errored = true;
-    contents.emit('error', new Error('gulp-download-stream', e));
+    file.contents.emit('error', new Error('gulp-download-stream', e));
   }
 
   // Request pipes to file contents
   var start = process.hrtime();
   var errored = false;
   log('Downloading', col.magenta(obj.url) + '...');
-  var r = request(merge({
+  request(merge({
     url: obj.url,
     encoding: null
   }, options))
@@ -45,34 +59,16 @@ function getFile(obj, options) {
         log('Downloaded', col.magenta(obj.url), 'after', col.magenta(pretty(end)));
       }
     })
-    .pipe(contents)
-    .on('error', function() {
-      // Avoids "Unhandled stream error in pipe" messages.
-      // gulp will still fail the containing task if there is
-      // an error downloading
-    });
+    .pipe(file.contents);
 
   return file;
 }
 
-
-
 module.exports = function(urls, options) {
-
+  urls = canonicaliseUrls(urls);
   options = options || {};
-  
-  // Canonicalise urls to array of objects
-  urls = typeof urls === 'string' ? [urls] : urls;
-  urls.forEach(function(url, i) {
-    if (typeof url === 'string') {
-      urls[i] = {
-        url: url,
-        file: url.split('/').pop(),
-      };
-    }
-  });
-  var urlIndex = 0;
 
+  var urlIndex = 0;
   return from({
     objectMode: true
   }, function(size, next) {
@@ -85,7 +81,7 @@ module.exports = function(urls, options) {
       ++urlIndex;
     }
 
-    if (urlIndex == urls.length) {
+    if (urlIndex === urls.length) {
       next(null, null);
     }
   });
