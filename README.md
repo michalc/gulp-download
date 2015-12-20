@@ -83,3 +83,8 @@ download("http://domain.com/path/to/file.ext", {
 
 ```
 
+
+## Error handling
+
+For any file, if node can't connect to the server, or the server returns a status code >= 400, then the Vinyl stream will emit an error and the containing gulp task will fail.
+
