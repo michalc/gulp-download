@@ -1,4 +1,4 @@
-# gulp-download-stream
+# gulp-download-stream [![Build Status](https://travis-ci.org/michalc/gulp-download-stream.svg?branch=master)](https://travis-ci.org/michalc/gulp-download-stream)
 
 [Request](https://github.com/mikeal/request) wrapper for gulp, allowing you to download files via http/https. The files contents are [streamed](streamed) into a stream of [Vinyl](https://github.com/gulpjs/vinyl) files and so download in parallel / concurrently.
 
