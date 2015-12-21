@@ -17,7 +17,7 @@ describe('gulp-download-stream', function() {
     mockery.registerMock('request', function() {
 
     });
-    download = require('.', true);
+    download = require('..', true);
   });
 
   it('returns a readable stream', function() {

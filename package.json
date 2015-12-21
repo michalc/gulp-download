@@ -30,10 +30,11 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "isstream": "^0.1.2",
+    "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
     "mockery": "^1.4.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "istanbul cover --include-all-sources _mocha tests"
   }
 }
