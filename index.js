@@ -1,7 +1,7 @@
 'use strict';
 
 var through = require("through2");
-var from = require("from2");
+var stream = require("stream");
 var gutil = require("gulp-util");
 var request = require("request");
 var pretty = require("pretty-hrtime");
@@ -69,21 +69,26 @@ module.exports = function(urls, options) {
   options = options || {};
 
   var urlIndex = 0;
-  return from({
+  var fileStream = stream.Readable({
     objectMode: true
-  }, function(size, next) {
+  });
+  fileStream._read = function(size) {
     var i = 0;
 
-    while (urlIndex < urls.length && i < size) {
-      next(null, getFile(urlObjs[urlIndex], options));
+    var iCurrent = i;
+    var urlIndexCurrent = urlIndex;
+
+    while (urlIndex < urlObjs.length && i < size) {
+      this.push(getFile(urlObjs[urlIndex], options));
 
       ++i;
       ++urlIndex;
     }
 
-    if (urlIndex === urls.length) {
-      next(null, null);
+    if (urlIndex === urlObjs.length) {
+      this.push(null);
     }
-  });
+  };
+  return fileStream;
 };
 
