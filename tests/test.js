@@ -13,6 +13,8 @@ chai.use(sinonChai);
 var gutil = require('gulp-util');
 var through = require('through2');
 var stream = require('stream');
+var stripAnsi = require('strip-ansi');
+
 var dummy1 = 'http://dummy.com/file1.txt';
 var dummy2 = 'http://dummy.com/file2.txt';
 var dummyContent = 'This is the content of the request';
@@ -116,6 +118,22 @@ describe('gulp-download-stream', function() {
       .pipe(through({objectMode:true}, function(chunk, enc, callback) {
         chunk.contents.on('error', function(error) {
           expect(error.message).to.equal(message);
+          done();
+        });
+      }));
+  });
+
+  it('passes a 400 response as a Vinyl contents stream error', function(done) {
+    source._read = function() {
+      this.emit('response', {statusCode: 400});
+    }
+
+    download({
+      url: dummy1
+    })
+      .pipe(through({objectMode:true}, function(chunk, enc, callback) {
+        chunk.contents.on('error', function(error) {
+          expect(stripAnsi(error.message)).to.equal('400 returned from ' + dummy1);
           done();
         });
       }));
