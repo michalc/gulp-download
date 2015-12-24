@@ -15,6 +15,7 @@ var through = require('through2');
 var stream = require('stream');
 var dummy1 = 'http://dummy.com/file1.txt';
 var dummy2 = 'http://dummy.com/file2.txt';
+var dummyContent = 'This is the content of the request';
 
 describe('gulp-download-stream', function() {
   var download, mockUtil, mockRequest, target, mockery;
@@ -27,6 +28,7 @@ describe('gulp-download-stream', function() {
 
     var source = stream.Readable();
     source._read = function() {
+      this.push(dummyContent);
       this.push(null);
     };
     mockRequest = sinon.stub();
@@ -87,6 +89,18 @@ describe('gulp-download-stream', function() {
          done();
       })
       .pipe(through({objectMode:true}));
+  });
+
+  it('passes the content of the response to the Vinyl file', function(done) {
+    download({
+      url: dummy1
+    })
+      .pipe(through({objectMode:true}, function(chunk, enc, callback) {
+        chunk.contents.pipe(through(function(chunk, enc, callback) {
+          expect(chunk.toString()).to.equal(dummyContent);
+          done();
+        }));
+      }));
   });
 
   afterEach(function() {
