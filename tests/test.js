@@ -18,7 +18,7 @@ var dummy2 = 'http://dummy.com/file2.txt';
 var dummyContent = 'This is the content of the request';
 
 describe('gulp-download-stream', function() {
-  var download, mockUtil, mockRequest, target, mockery;
+  var download, mockUtil, mockRequest, source, target, mockery;
 
   beforeEach(function() {
     mockery = require('mockery');
@@ -26,11 +26,7 @@ describe('gulp-download-stream', function() {
       warnOnUnregistered: false
     });
 
-    var source = stream.Readable();
-    source._read = function() {
-      this.push(dummyContent);
-      this.push(null);
-    };
+    source = stream.Readable();
     mockRequest = sinon.stub();
     mockRequest.returns(source);
     mockery.registerMock('request', function(options) {
@@ -92,6 +88,11 @@ describe('gulp-download-stream', function() {
   });
 
   it('passes the content of the response to the Vinyl file', function(done) {
+    source._read = function() {
+      this.push(dummyContent);
+      this.push(null);
+    }
+
     download({
       url: dummy1
     })
@@ -100,6 +101,23 @@ describe('gulp-download-stream', function() {
           expect(chunk.toString()).to.equal(dummyContent);
           done();
         }));
+      }));
+  });
+
+  it('passes a request error to the Vinyl contents stream', function(done) {
+    var message = 'This is the error';
+    source._read = function() {
+      this.emit('error', new Error(message));
+    }
+
+    download({
+      url: dummy1
+    })
+      .pipe(through({objectMode:true}, function(chunk, enc, callback) {
+        chunk.contents.on('error', function(error) {
+          expect(error.message).to.equal(message);
+          done();
+        });
       }));
   });
 
