@@ -23,10 +23,19 @@ describe('gulp-download-stream', function() {
     mockery.enable({
       warnOnUnregistered: false
     });
+
+    var source = stream.Readable();
+    source._read = function() {
+      this.push(null);
+    };
+    mockRequest = sinon.stub();
+    mockRequest.returns(source);
     mockery.registerMock('request', function(options) {
       return mockRequest(options);
     });
+
     sinon.stub(gutil, 'log', function() {});
+
     download = require('..', true);
   });
 
@@ -37,14 +46,6 @@ describe('gulp-download-stream', function() {
   });
 
   it('passes a single URL to request', function(done) {
-    var source = stream.Readable();
-    source._read = function() {
-      this.push(null);
-    };
-
-    mockRequest = sinon.stub();
-    mockRequest.returns(source);
-
     download(dummy)
       .on('end', function() {
          expect(mockRequest).to.have.been.calledWith({
