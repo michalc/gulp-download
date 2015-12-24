@@ -45,6 +45,7 @@ describe('gulp-download-stream', function() {
     expect(isReadable(fileStream)).to.be.true;
   });
 
+
   it('passes a single URL to request', function(done) {
     download(dummy)
       .on('end', function() {
@@ -54,7 +55,21 @@ describe('gulp-download-stream', function() {
          });
          done();
       })
-      .pipe(through({objectMode:true}))
+      .pipe(through({objectMode:true}));
+  });
+
+  it('passes a single URL from an object to request', function(done) {
+    download({
+      url: dummy
+    })
+      .on('end', function() {
+         expect(mockRequest).to.have.been.calledWith({
+           url: dummy,
+           encoding: null
+         });
+         done();
+      })
+      .pipe(through({objectMode:true}));
   });
 
   afterEach(function() {

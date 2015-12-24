@@ -11,7 +11,7 @@ var log = gutil.log;
 var Error = gutil.PluginError;
 
 function canonicaliseUrls(urls) {
-  urls = typeof urls === 'string' ? [urls] : urls;
+  urls = Array.isArray(urls) ? urls : [urls];
   return urls.map(function(url, i) {
     return typeof url === 'object' ? url : {
       url: url,
