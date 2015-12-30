@@ -28,9 +28,11 @@ describe('gulp-download-stream', function() {
       warnOnUnregistered: false
     });
 
-    source = stream.Readable();
-    mockRequest = sinon.stub();
-    mockRequest.returns(source);
+    mockRequest = sinon.spy(function(options) {
+      source = stream.Readable();
+      return source;
+    });
+
     mockery.registerMock('request', function(options) {
       return mockRequest(options);
     });
@@ -40,19 +42,47 @@ describe('gulp-download-stream', function() {
     download = require('..', true);
   });
 
+  afterEach(function() {
+    gutil.log.restore();
+    mockery.deregisterAll();
+    mockery.disable();
+    mockRequest = null;
+    source = null;
+    download = null;
+  });
+
   it('returns a readable stream', function() {
     var isReadable = require('isstream').isReadable;
     var fileStream = download(dummy1);
     expect(isReadable(fileStream)).to.be.true;
   });
 
+  it('makes (readable highWaterMark + writable highWatermark) requests before writing', function(done) {
+    var stream = require("stream");
+    var files = Array(18).fill(dummy1);
+
+    var writable = stream.Writable({
+      objectMode: true,
+      highWaterMark: 1,
+      write: function(chunk, end, cb) {
+        expect(mockRequest).to.have.callCount(17);
+        done();
+
+        // So all stream will be processed to avoid any memory leaks
+        cb();
+      }
+    });
+
+    var d = download(files)
+      .pipe(writable);
+  });
 
   it('passes a single URL from a string to request', function(done) {
     download(dummy1)
       .on('end', function() {
          expect(mockRequest).to.have.been.calledWith({
-           url: dummy1,
-           encoding: null
+           encoding: null,
+           url: dummy1
          });
          done();
       })
@@ -90,32 +120,34 @@ describe('gulp-download-stream', function() {
   });
 
   it('passes the content of the response to the Vinyl file', function(done) {
-    source._read = function() {
-      this.push(dummyContent);
-      this.push(null);
-    }
-
-    download({
+    var downloadStream = download({
       url: dummy1
-    })
-      .pipe(through({objectMode:true}, function(chunk, enc, callback) {
-        chunk.contents.pipe(through(function(chunk, enc, callback) {
-          expect(chunk.toString()).to.equal(dummyContent);
-          done();
-        }));
+    });
+
+    downloadStream.pipe(through({objectMode:true}, function(chunk, enc, callback) {
+      source._read = function() {
+        this.push(dummyContent);
+        this.push(null);
+      };
+
+      chunk.contents.pipe(through(function(chunk, enc, callback) {
+        expect(chunk.toString()).to.equal(dummyContent);
+        done();
       }));
+    }));
   });
 
   it('passes a request error to the Vinyl contents stream', function(done) {
     var message = 'This is the error';
-    source._read = function() {
-      this.emit('error', new Error(message));
-    }
 
     download({
       url: dummy1
     })
       .pipe(through({objectMode:true}, function(chunk, enc, callback) {
+        source._read = function() {
+          this.emit('error', new Error(message));
+        };
+
         chunk.contents.on('error', function(error) {
           expect(error.message).to.equal(message);
           done();
@@ -124,14 +156,14 @@ describe('gulp-download-stream', function() {
   });
 
   it('passes a 400 response as a Vinyl contents stream error', function(done) {
-    source._read = function() {
-      this.emit('response', {statusCode: 400});
-    }
-
     download({
       url: dummy1
     })
       .pipe(through({objectMode:true}, function(chunk, enc, callback) {
+        source._read = function() {
+          this.emit('response', {statusCode: 400});
+        };
+
         chunk.contents.on('error', function(error) {
           expect(stripAnsi(error.message)).to.equal('400 returned from ' + dummy1);
           done();
@@ -139,9 +171,4 @@ describe('gulp-download-stream', function() {
       }));
   });
 
-  afterEach(function() {
-    gutil.log.restore();
-    mockery.deregisterAll();
-    mockery.disable();
-  });
 });

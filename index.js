@@ -77,9 +77,9 @@ module.exports = function(urls, options) {
 
     var iCurrent = i;
     var urlIndexCurrent = urlIndex;
-
-    while (urlIndex < urlObjs.length && i < size) {
-      this.push(getFile(urlObjs[urlIndex], options));
+    var more = true;
+    while (urlIndex < urlObjs.length && i < size && more) {
+      more = this.push(getFile(urlObjs[urlIndex], options));
 
       ++i;
       ++urlIndex;
