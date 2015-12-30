@@ -1,6 +1,5 @@
 'use strict';
 
-var through = require("through2");
 var stream = require("stream");
 var gutil = require("gulp-util");
 var request = require("request");
@@ -23,7 +22,7 @@ function canonicaliseUrls(urls) {
 function getFile(urlObj, options) {
   var file = new gutil.File({
     path: urlObj.file,
-    contents: through()
+    contents: stream.PassThrough()
   });
 
   // Avoids "Unhandled stream error in pipe" messages.
