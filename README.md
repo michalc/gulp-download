@@ -1,4 +1,4 @@
-# gulp-download-stream [![Build Status](https://travis-ci.org/michalc/gulp-download-stream.svg?branch=master)](https://travis-ci.org/michalc/gulp-download-stream) [![Coverage Status](https://coveralls.io/repos/michalc/gulp-download-stream/badge.svg?branch=master&service=github)](https://coveralls.io/github/michalc/gulp-download-stream?branch=master)
+# gulp-download-stream [![Build Status](https://travis-ci.org/michalc/gulp-download-stream.svg?branch=master)](https://travis-ci.org/michalc/gulp-download-stream) [![Coverage Status](https://coveralls.io/repos/michalc/gulp-download-stream/badge.svg?branch=master&service=github)](https://coveralls.io/github/michalc/gulp-download-stream?branch=master) [![Dependency Status](https://david-dm.org/michalc/gulp-download-stream.svg)](https://david-dm.org/michalc/gulp-download-stream)
 
 [Request](https://github.com/mikeal/request) wrapper for gulp, allowing you to download files via http/https. The files contents are [streamed](streamed) into a stream of [Vinyl](https://github.com/gulpjs/vinyl) files and so download in parallel / concurrently.
 
