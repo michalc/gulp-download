@@ -11,7 +11,6 @@ var sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
 var gutil = require('gulp-util');
-var through = require('through2');
 var stream = require('stream');
 var stripAnsi = require('strip-ansi');
 
@@ -86,7 +85,7 @@ describe('gulp-download-stream', function() {
          });
          done();
       })
-      .pipe(through({objectMode:true}));
+      .pipe(stream.PassThrough({objectMode: true}));
   });
 
   it('passes a single URL from an object to request', function(done) {
@@ -100,7 +99,7 @@ describe('gulp-download-stream', function() {
          });
          done();
       })
-      .pipe(through({objectMode:true}));
+      .pipe(stream.PassThrough({objectMode: true}));
   });
 
   it('passes an array of strings to request', function(done) {
@@ -116,7 +115,7 @@ describe('gulp-download-stream', function() {
          });
          done();
       })
-      .pipe(through({objectMode:true}));
+      .pipe(stream.PassThrough({objectMode: true}));
   });
 
   it('passes the content of the response to the Vinyl file', function(done) {
@@ -124,16 +123,21 @@ describe('gulp-download-stream', function() {
       url: dummy1
     });
 
-    downloadStream.pipe(through({objectMode:true}, function(chunk, enc, callback) {
-      source._read = function() {
-        this.push(dummyContent);
-        this.push(null);
-      };
+    downloadStream.pipe(stream.PassThrough({
+      objectMode: true,
+      transform: function(chunk, enc, callback) {
+        source._read = function() {
+          this.push(dummyContent);
+          this.push(null);
+        };
 
-      chunk.contents.pipe(through(function(chunk, enc, callback) {
-        expect(chunk.toString()).to.equal(dummyContent);
-        done();
-      }));
+        chunk.contents.pipe(stream.Transform({
+          transform: function(chunk, enc, callback) {
+            expect(chunk.toString()).to.equal(dummyContent);
+            done();
+          }
+        }));
+      }
     }));
   });
 
@@ -143,15 +147,18 @@ describe('gulp-download-stream', function() {
     download({
       url: dummy1
     })
-      .pipe(through({objectMode:true}, function(chunk, enc, callback) {
-        source._read = function() {
-          this.emit('error', new Error(message));
-        };
+      .pipe(stream.Transform({
+        objectMode: true,
+        transform: function(chunk, enc, callback) {
+          source._read = function() {
+            this.emit('error', new Error(message));
+          };
 
-        chunk.contents.on('error', function(error) {
-          expect(error.message).to.equal(message);
-          done();
-        });
+          chunk.contents.on('error', function(error) {
+            expect(error.message).to.equal(message);
+            done();
+          });
+        }
       }));
   });
 
@@ -159,15 +166,18 @@ describe('gulp-download-stream', function() {
     download({
       url: dummy1
     })
-      .pipe(through({objectMode:true}, function(chunk, enc, callback) {
-        source._read = function() {
-          this.emit('response', {statusCode: 400});
-        };
+      .pipe(stream.Transform({
+        objectMode: true,
+        transform: function(chunk, enc, callback) {
+          source._read = function() {
+            this.emit('response', {statusCode: 400});
+          };
 
-        chunk.contents.on('error', function(error) {
-          expect(stripAnsi(error.message)).to.equal('400 returned from ' + dummy1);
-          done();
-        });
+          chunk.contents.on('error', function(error) {
+            expect(stripAnsi(error.message)).to.equal('400 returned from ' + dummy1);
+            done();
+          });
+        }
       }));
   });
 
