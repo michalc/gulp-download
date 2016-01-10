@@ -68,26 +68,25 @@ module.exports = function(urls, options) {
   options = options || {};
 
   var urlIndex = 0;
-  var fileStream = stream.Readable({
-    objectMode: true
+  return stream.Readable({
+    objectMode: true,
+    read: function(size) {
+      var i = 0;
+
+      var iCurrent = i;
+      var urlIndexCurrent = urlIndex;
+      var more = true;
+      while (urlIndex < urlObjs.length && i < size && more) {
+        more = this.push(getFile(urlObjs[urlIndex], options));
+
+        ++i;
+        ++urlIndex;
+      }
+
+      if (urlIndex === urlObjs.length) {
+        this.push(null);
+      }
+    }
   });
-  fileStream._read = function(size) {
-    var i = 0;
-
-    var iCurrent = i;
-    var urlIndexCurrent = urlIndex;
-    var more = true;
-    while (urlIndex < urlObjs.length && i < size && more) {
-      more = this.push(getFile(urlObjs[urlIndex], options));
-
-      ++i;
-      ++urlIndex;
-    }
-
-    if (urlIndex === urlObjs.length) {
-      this.push(null);
-    }
-  };
-  return fileStream;
 };
 
