@@ -28,7 +28,9 @@ function getFile(urlObj, options) {
   // Avoids "Unhandled stream error in pipe" messages.
   // gulp will still fail the containing task if there is
   // an error downloading
-  file.contents.on('error', function() {});
+  file.contents.on('error', function(e) {
+    throw e;
+  });
 
   // Request errors passed to file contents
   function emitError(e) {
