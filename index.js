@@ -5,6 +5,7 @@ var gutil = require('gulp-util');
 var request = require('request');
 var pretty = require('pretty-hrtime');
 var merge = require('merge');
+var Vinyl = require('vinyl');
 var col = gutil.colors;
 var log = gutil.log;
 var Error = gutil.PluginError;
@@ -20,7 +21,7 @@ function canonicaliseUrls(urls) {
 }
 
 function getFile(urlObj, options) {
-  var file = new gutil.File({
+  var file = new Vinyl({
     path: urlObj.file,
     contents: stream.PassThrough()
   });
