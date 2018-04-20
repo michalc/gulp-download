@@ -19,7 +19,7 @@ var dummy2 = 'http://dummy.com/file2.txt';
 var dummyContent = 'This is the content of the request';
 
 describe('gulp-download-stream', function() {
-  var download, mockUtil, mockRequest, source, target, mockery;
+  var download, mockRequest, source, mockery;
 
   beforeEach(function() {
     mockery = require('mockery');
@@ -127,14 +127,14 @@ describe('gulp-download-stream', function() {
 
     downloadStream.pipe(stream.PassThrough({
       objectMode: true,
-      transform: function(chunk, enc, callback) {
+      transform: function(chunk, enc) {
         source._read = function() {
           this.push(dummyContent);
           this.push(null);
         };
 
         chunk.contents.pipe(stream.Transform({
-          transform: function(chunk, enc, callback) {
+          transform: function(chunk, enc) {
             expect(chunk.toString()).to.equal(dummyContent);
             done();
           }
@@ -151,7 +151,7 @@ describe('gulp-download-stream', function() {
     })
       .pipe(stream.Transform({
         objectMode: true,
-        transform: function(chunk, enc, callback) {
+        transform: function(chunk, enc) {
           source._read = function() {
             this.emit('error', new Error(message));
           };
@@ -170,7 +170,7 @@ describe('gulp-download-stream', function() {
     })
       .pipe(stream.Transform({
         objectMode: true,
-        transform: function(chunk, enc, callback) {
+        transform: function(chunk, enc) {
           source._read = function() {
             this.emit('response', {statusCode: 400});
           };
