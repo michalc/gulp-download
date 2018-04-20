@@ -134,6 +134,7 @@ describe('gulp-download-stream', function() {
       objectMode: true,
       transform: function(chunk) {
         source._read = function() {
+          this.emit('response', {statusCode: 200});
           this.push(dummyContent);
           this.push(null);
         };
