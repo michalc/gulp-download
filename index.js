@@ -1,13 +1,12 @@
 'use strict';
 
 var stream = require('stream');
-var gutil = require('gulp-util');
 var request = require('request');
 var pretty = require('pretty-hrtime');
 var merge = require('merge');
 var Vinyl = require('vinyl');
 var col = require('ansi-colors');
-var log = gutil.log;
+var log = require('fancy-log');
 var Error = require('plugin-error');
 
 function canonicaliseUrls(urls) {
