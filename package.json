@@ -41,7 +41,7 @@
     "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
     "mocha-lcov-reporter": "^1.0.0",
-    "mockery": "^1.4.0",
+    "mockery": "^2.1.0",
     "rewire": "^4.0.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
