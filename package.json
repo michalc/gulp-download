@@ -19,10 +19,10 @@
     "stream"
   ],
   "dependencies": {
-    "gulp-util": "^3.0.7",
+    "gulp-util": "^3.0.8",
     "merge": "^1.2.0",
-    "pretty-hrtime": "^1.0.1",
-    "request": "^2.67.0"
+    "pretty-hrtime": "^1.0.3",
+    "request": "^2.85.0"
   },
   "main": "index.js",
   "devDependencies": {
