@@ -28,7 +28,9 @@ describe('gulp-download-stream', function() {
     });
 
     mockRequest = sinon.spy(function(options) {
-      source = stream.Readable();
+      source = stream.Readable({
+        read: function() {}
+      });
       return source;
     });
 
