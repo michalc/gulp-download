@@ -27,7 +27,7 @@ describe('gulp-download-stream', function() {
       warnOnUnregistered: false
     });
 
-    mockRequest = sinon.spy(function(options) {
+    mockRequest = sinon.spy(function() {
       source = stream.Readable({
         read: function() {}
       });
@@ -74,7 +74,7 @@ describe('gulp-download-stream', function() {
       }
     });
 
-    var d = download(files)
+    download(files)
       .pipe(writable);
   });
 
