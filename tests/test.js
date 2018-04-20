@@ -1,3 +1,5 @@
+/*eslint-env mocha */
+
 'use strict';
 
 var chai = require('chai');
