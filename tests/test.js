@@ -61,14 +61,13 @@ describe('gulp-download-stream', function() {
     expect(isReadable(fileStream)).to.be.true;
   });
 
-  it('makes (readable highWaterMark + writable highWatermark) requests before writing', function(done) {
+  it('makes (readable highWaterMark + 1) requests before writing', function(done) {
     var stream = require('stream');
     var files = Array(18).fill(dummy1);
 
     var started = false;
     var writable = stream.Writable({
       objectMode: true,
-      highWaterMark: 1,
       write: function(chunk, end, cb) {
         if (!started) {
           expect(mockRequest).to.have.callCount(17);
