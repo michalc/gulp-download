@@ -43,8 +43,8 @@
     "mocha-lcov-reporter": "^1.0.0",
     "mockery": "^2.1.0",
     "rewire": "^4.0.0",
-    "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
+    "sinon": "^4.5.0",
+    "sinon-chai": "^3.0.0",
     "strip-ansi": "^3.0.0"
   },
   "scripts": {
