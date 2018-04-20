@@ -65,12 +65,16 @@ describe('gulp-download-stream', function() {
     var stream = require('stream');
     var files = Array(18).fill(dummy1);
 
+    var started = false;
     var writable = stream.Writable({
       objectMode: true,
       highWaterMark: 1,
       write: function(chunk, end, cb) {
-        expect(mockRequest).to.have.callCount(17);
-        done();
+        if (!started) {
+          expect(mockRequest).to.have.callCount(17);
+          started = true;
+          done();
+        }
 
         // So all stream will be processed to avoid any memory leaks
         cb();
