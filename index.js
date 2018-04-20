@@ -8,7 +8,7 @@ var merge = require('merge');
 var Vinyl = require('vinyl');
 var col = require('ansi-colors');
 var log = gutil.log;
-var Error = gutil.PluginError;
+var Error = require('plugin-error');
 
 function canonicaliseUrls(urls) {
   urls = Array.isArray(urls) ? urls : [urls];
