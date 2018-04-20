@@ -42,7 +42,7 @@ describe('gulp-download-stream', function() {
 
     sinon.stub(gutil, 'log', function() {});
 
-    download = require('..', true);
+    download = require('..');
   });
 
   afterEach(function() {
