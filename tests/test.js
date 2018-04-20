@@ -81,11 +81,11 @@ describe('gulp-download-stream', function() {
   it('passes a single URL from a string to request', function(done) {
     download(dummy1)
       .on('end', function() {
-         expect(mockRequest).to.have.been.calledWith({
-           encoding: null,
-           url: dummy1
-         });
-         done();
+        expect(mockRequest).to.have.been.calledWith({
+          encoding: null,
+          url: dummy1
+        });
+        done();
       })
       .pipe(stream.PassThrough({objectMode: true}));
   });
@@ -95,11 +95,11 @@ describe('gulp-download-stream', function() {
       url: dummy1
     })
       .on('end', function() {
-         expect(mockRequest).to.have.been.calledWith({
-           url: dummy1,
-           encoding: null
-         });
-         done();
+        expect(mockRequest).to.have.been.calledWith({
+          url: dummy1,
+          encoding: null
+        });
+        done();
       })
       .pipe(stream.PassThrough({objectMode: true}));
   });
@@ -107,15 +107,15 @@ describe('gulp-download-stream', function() {
   it('passes an array of strings to request', function(done) {
     download([dummy1, dummy2])
       .on('end', function() {
-         expect(mockRequest).to.have.been.calledWith({
-           url: dummy1,
-           encoding: null
-         });
-         expect(mockRequest).to.have.been.calledWith({
-           url: dummy2,
-           encoding: null
-         });
-         done();
+        expect(mockRequest).to.have.been.calledWith({
+          url: dummy1,
+          encoding: null
+        });
+        expect(mockRequest).to.have.been.calledWith({
+          url: dummy2,
+          encoding: null
+        });
+        done();
       })
       .pipe(stream.PassThrough({objectMode: true}));
   });
