@@ -12,15 +12,12 @@ var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var rewire = require('rewire');
 var stream = require('stream');
 var stripAnsi = require('strip-ansi');
 
 var dummy1 = 'http://dummy.com/file1.txt';
 var dummy2 = 'http://dummy.com/file2.txt';
 var dummyContent = 'This is the content of the request';
-
-var restoreLog;
 
 describe('gulp-download-stream', function() {
   var download, mockRequest, source, mockery;
@@ -42,12 +39,14 @@ describe('gulp-download-stream', function() {
       return mockRequest(options);
     });
 
-    download = rewire('..');
-    restoreLog = download.__set__('log', function() {});
+    mockery.registerMock('fancy-log', function() {
+      return function() {};
+    });
+
+    download = require('..');
   });
 
   afterEach(function() {
-    restoreLog();
     mockery.deregisterAll();
     mockery.disable();
     mockRequest = null;
@@ -61,16 +60,19 @@ describe('gulp-download-stream', function() {
     expect(isReadable(fileStream)).to.be.true;
   });
 
-  it('makes (readable highWaterMark + writable highWatermark) requests before writing', function(done) {
+  it('makes (readable highWaterMark + 1) requests before writing', function(done) {
     var stream = require('stream');
     var files = Array(18).fill(dummy1);
 
+    var started = false;
     var writable = stream.Writable({
       objectMode: true,
-      highWaterMark: 1,
       write: function(chunk, end, cb) {
-        expect(mockRequest).to.have.callCount(17);
-        done();
+        if (!started) {
+          expect(mockRequest).to.have.callCount(17);
+          started = true;
+          done();
+        }
 
         // So all stream will be processed to avoid any memory leaks
         cb();
