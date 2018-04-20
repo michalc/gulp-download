@@ -45,7 +45,7 @@
     "rewire": "^4.0.0",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
-    "strip-ansi": "^3.0.0"
+    "strip-ansi": "^4.0.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/eslint *.js tests/*.js && istanbul cover --include-all-sources _mocha tests --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
