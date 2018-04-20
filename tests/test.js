@@ -59,7 +59,7 @@ describe('gulp-download-stream', function() {
   });
 
   it('makes (readable highWaterMark + writable highWatermark) requests before writing', function(done) {
-    var stream = require("stream");
+    var stream = require('stream');
     var files = Array(18).fill(dummy1);
 
     var writable = stream.Writable({
