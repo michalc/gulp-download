@@ -12,15 +12,12 @@ var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-var rewire = require('rewire');
 var stream = require('stream');
 var stripAnsi = require('strip-ansi');
 
 var dummy1 = 'http://dummy.com/file1.txt';
 var dummy2 = 'http://dummy.com/file2.txt';
 var dummyContent = 'This is the content of the request';
-
-var restoreLog;
 
 describe('gulp-download-stream', function() {
   var download, mockRequest, source, mockery;
@@ -42,12 +39,14 @@ describe('gulp-download-stream', function() {
       return mockRequest(options);
     });
 
-    download = rewire('..');
-    restoreLog = download.__set__('log', function() {});
+    mockery.registerMock('fancy-log', function() {
+      return function() {};
+    });
+
+    download = require('..');
   });
 
   afterEach(function() {
-    restoreLog();
     mockery.deregisterAll();
     mockery.disable();
     mockRequest = null;
