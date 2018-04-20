@@ -1,10 +1,10 @@
 'use strict';
 
-var stream = require("stream");
-var gutil = require("gulp-util");
-var request = require("request");
-var pretty = require("pretty-hrtime");
-var merge = require("merge");
+var stream = require('stream');
+var gutil = require('gulp-util');
+var request = require('request');
+var pretty = require('pretty-hrtime');
+var merge = require('merge');
 var col = gutil.colors;
 var log = gutil.log;
 var Error = gutil.PluginError;
