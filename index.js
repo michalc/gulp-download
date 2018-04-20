@@ -27,13 +27,11 @@ function getFile(urlObj, options) {
 
   // Request errors passed to file contents
   function emitError(e) {
-    errored = true;
     file.contents.emit('error', new Error('gulp-download-stream', e));
   }
 
   // Request pipes to file contents
   var start = process.hrtime();
-  var errored = false;
   log('Downloading', col.magenta(urlObj.url) + '...');
   request(merge({
     url: urlObj.url,
@@ -48,10 +46,8 @@ function getFile(urlObj, options) {
       }
     })
     .on('end', function() {
-      if (!errored) {
-        var end = process.hrtime(start);
-        log('Downloaded', col.magenta(urlObj.url), 'after', col.magenta(pretty(end)));
-      }
+      var end = process.hrtime(start);
+      log('Downloaded', col.magenta(urlObj.url), 'after', col.magenta(pretty(end)));
     })
     .pipe(file.contents);
 
