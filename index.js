@@ -6,7 +6,7 @@ var request = require('request');
 var pretty = require('pretty-hrtime');
 var merge = require('merge');
 var Vinyl = require('vinyl');
-var col = gutil.colors;
+var col = require('ansi-colors');
 var log = gutil.log;
 var Error = gutil.PluginError;
 
