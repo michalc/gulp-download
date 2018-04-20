@@ -127,14 +127,14 @@ describe('gulp-download-stream', function() {
 
     downloadStream.pipe(stream.PassThrough({
       objectMode: true,
-      transform: function(chunk, enc) {
+      transform: function(chunk) {
         source._read = function() {
           this.push(dummyContent);
           this.push(null);
         };
 
         chunk.contents.pipe(stream.Transform({
-          transform: function(chunk, enc) {
+          transform: function(chunk) {
             expect(chunk.toString()).to.equal(dummyContent);
             done();
           }
@@ -151,7 +151,7 @@ describe('gulp-download-stream', function() {
     })
       .pipe(stream.Transform({
         objectMode: true,
-        transform: function(chunk, enc) {
+        transform: function(chunk) {
           source._read = function() {
             this.emit('error', new Error(message));
           };
@@ -170,7 +170,7 @@ describe('gulp-download-stream', function() {
     })
       .pipe(stream.Transform({
         objectMode: true,
-        transform: function(chunk, enc) {
+        transform: function(chunk) {
           source._read = function() {
             this.emit('response', {statusCode: 400});
           };
