@@ -11,7 +11,7 @@ var Error = gutil.PluginError;
 
 function canonicaliseUrls(urls) {
   urls = Array.isArray(urls) ? urls : [urls];
-  return urls.map(function(url, i) {
+  return urls.map(function(url) {
     return typeof url === 'object' ? url : {
       url: url,
       file: url.split('/').pop(),
@@ -47,7 +47,7 @@ function getFile(urlObj, options) {
         emitError(col.magenta(response.statusCode) + ' returned from ' + col.magenta(urlObj.url));
       }
     })
-    .on('end', function(e) {
+    .on('end', function() {
       if (!errored) {
         var end = process.hrtime(start);
         log('Downloaded', col.magenta(urlObj.url), 'after', col.magenta(pretty(end)));
@@ -68,8 +68,6 @@ module.exports = function(urls, options) {
     read: function(size) {
       var i = 0;
 
-      var iCurrent = i;
-      var urlIndexCurrent = urlIndex;
       var more = true;
       while (urlIndex < urlObjs.length && i < size && more) {
         more = this.push(getFile(urlObjs[urlIndex], options));
