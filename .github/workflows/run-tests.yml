@@ -6,11 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  COVERALLS_SERVICE_NAME: github-actions
-  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-  COVERALLS_GIT_BRANCH: $GITHUB_REF_NAME
-
 jobs:
   build:
 
@@ -29,3 +24,8 @@ jobs:
       - run: npm install
       - run: npm run build --if-present
       - run: npm test
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
