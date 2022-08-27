@@ -30,7 +30,6 @@
   "main": "index.js",
   "devDependencies": {
     "chai": "^4.3.6",
-    "coveralls": "^3.1.1",
     "eslint": "^8.23.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -47,6 +46,6 @@
     "strip-ansi": "^4.0.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/eslint *.js tests/*.js && istanbul cover --include-all-sources _mocha tests --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "test": "./node_modules/.bin/eslint *.js tests/*.js && istanbul cover --include-all-sources _mocha tests --report lcovonly -- -R spec"
   }
 }
