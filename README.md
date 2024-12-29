@@ -13,13 +13,13 @@ npm install gulp-download-stream --save
 ## Usage
 
 ```javascript
-var download = require("gulp-download-stream");
+import download from "gulp-download-stream";
 ```
-	
+
 ### Download single file
 
 To download a single file, pass a string as the first argument to `download`.
-	
+
 ```javascript
 download("http://domain.com/path/to/file.ext")
   .pipe(gulp.dest("downloads/"));
