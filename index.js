@@ -1,13 +1,11 @@
-'use strict';
-
-var stream = require('stream');
-var request = require('request');
-var pretty = require('pretty-hrtime');
-var merge = require('merge');
-var Vinyl = require('vinyl');
-var col = require('ansi-colors');
-var log = require('fancy-log');
-var Error = require('plugin-error');
+import { PassThrough, Readable } from 'stream';
+import request from 'request';
+import pretty from 'pretty-hrtime';
+import merge from 'merge';
+import Vinyl from 'vinyl';
+import col from 'ansi-colors';
+import log from 'fancy-log';
+import PluginError from 'plugin-error';
 
 function canonicaliseUrls(urls) {
   urls = Array.isArray(urls) ? urls : [urls];
@@ -20,18 +18,18 @@ function canonicaliseUrls(urls) {
 }
 
 function getFile(urlObj, options) {
-  var file = new Vinyl({
+  const file = new Vinyl({
     path: urlObj.file,
-    contents: stream.PassThrough()
+    contents: new PassThrough()
   });
 
   // Request errors passed to file contents
   function emitError(e) {
-    file.contents.emit('error', new Error('gulp-download-stream', e));
+    file.contents.emit('error', new PluginError('gulp-download-stream', e));
   }
 
   // Request pipes to file contents
-  var start = process.hrtime();
+  const start = process.hrtime();
   log('Downloading', col.magenta(urlObj.url) + '...');
   request(merge({
     url: urlObj.url,
@@ -46,7 +44,7 @@ function getFile(urlObj, options) {
       }
     })
     .on('end', function() {
-      var end = process.hrtime(start);
+      const end = process.hrtime(start);
       log('Downloaded', col.magenta(urlObj.url), 'after', col.magenta(pretty(end)));
     })
     .pipe(file.contents);
@@ -54,17 +52,17 @@ function getFile(urlObj, options) {
   return file;
 }
 
-module.exports = function(urls, options) {
-  var urlObjs = canonicaliseUrls(urls);
+export default function(urls, options) {
+  const urlObjs = canonicaliseUrls(urls);
   options = options || {};
 
-  var urlIndex = 0;
-  return stream.Readable({
+  let urlIndex = 0;
+  return new Readable({
     objectMode: true,
     read: function(size) {
-      var i = 0;
+      let i = 0;
 
-      var more = true;
+      let more = true;
       while (urlIndex < urlObjs.length && i < size && more) {
         more = this.push(getFile(urlObjs[urlIndex], options));
 
@@ -77,5 +75,4 @@ module.exports = function(urls, options) {
       }
     }
   });
-};
-
+}

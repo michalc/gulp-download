@@ -1,6 +1,6 @@
 {
   "name": "gulp-download-stream",
-  "version": "0.0.20",
+  "version": "1.0.0",
   "description": "Gulp plugin for downloading files in parallel into Vinyl streams",
   "license": "MIT",
   "author": "Michael Ostermann <metrime@icloud.com>",
@@ -22,28 +22,29 @@
     "ansi-colors": "^4.1.3",
     "fancy-log": "^2.0.0",
     "merge": "^2.1.1",
-    "plugin-error": "^2.0.0",
+    "plugin-error": "^2.0.1",
     "pretty-hrtime": "^1.0.3",
     "request": "^2.88.2",
-    "vinyl": "^2.2.1"
+    "vinyl": "^3.0.0"
   },
+  "type": "module",
   "main": "index.js",
   "devDependencies": {
-    "chai": "^4.3.6",
-    "eslint": "^8.23.0",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0",
+    "chai": "^5.1.2",
+    "eslint": "^8.01.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.6.0",
+    "eslint-plugin-standard": "^5.0.0",
     "isstream": "^0.1.2",
     "istanbul": "^0.4.5",
-    "mocha": "^10.0.0",
+    "mocha": "^11.0.1",
     "mocha-lcov-reporter": "^1.3.0",
     "mockery": "^2.1.0",
-    "sinon": "^4.5.0",
-    "sinon-chai": "^3.7.0",
-    "strip-ansi": "^4.0.0"
+    "sinon": "^19.0.2",
+    "sinon-chai": "^4.0.0",
+    "strip-ansi": "^7.1.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/eslint *.js tests/*.js && istanbul cover --include-all-sources _mocha tests --report lcovonly -- -R spec"
